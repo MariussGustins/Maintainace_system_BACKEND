@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maintainace_system_BACKEND", "Maintainace_system_BACKEND\Maintainace_system_BACKEND.csproj", "{EEFC3609-A61A-4099-ABC6-68CF2EA054AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEFC3609-A61A-4099-ABC6-68CF2EA054AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEFC3609-A61A-4099-ABC6-68CF2EA054AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEFC3609-A61A-4099-ABC6-68CF2EA054AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEFC3609-A61A-4099-ABC6-68CF2EA054AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
