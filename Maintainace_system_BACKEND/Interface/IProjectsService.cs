@@ -4,5 +4,5 @@ namespace Maintainace_system_BACKEND.Interface;
 
 public interface IProjectsService
 {
-    
+    Task<ProjectsDto> CreateProjectAsync(ProjectsDto projectDto);
 }

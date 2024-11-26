@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Maintainace_system_BACKEND.Models;
+using Maintainace_system_BACKEND.Services;
+using Maintainace_system_BACKEND.Interface;
+using AutoMapper;
+using Maintainace_system_BACKEND.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +13,40 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// Register AutoMapper
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 // Configure Entity Framework to use SQL Server
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-// builder.Services.AddDbContext<EstateContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register EmployeeService
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeeIdentService, EmployeeIdentService>();
+builder.Services.AddScoped<IFilesService, FilesService>();
+builder.Services.AddScoped<IProjectsService, ProjectsService>();
+
+
+
+
+// CORS Configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        builder => builder
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
+});
+
+var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -20,6 +54,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 }
 
+app.UseRouting();
+app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
+app.MapControllers();
+
+app.Urls.Add("http://*:5086");
 
 app.Run();
