@@ -24,5 +24,15 @@ namespace Maintainace_system_BACKEND.Controllers
             var createdProject = await _projectsService.CreateProjectAsync(projectDto);
             return Ok(createdProject);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProjects()
+        {
+            var projects = await _projectsService.GetAllProjectsAsync();
+            if (projects == null || !projects.Any())
+                return NotFound("No projects found.");
+
+            return Ok(projects);
+        }
     }
 }
