@@ -23,13 +23,18 @@ builder.Services.AddSingleton(mapper);
 
 // Configure Entity Framework to use SQL Server
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 4, 3)) // MySQL versija
+    )
+);
 
 // Register EmployeeService
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEmployeeIdentService, EmployeeIdentService>();
 builder.Services.AddScoped<IFilesService, FilesService>();
 builder.Services.AddScoped<IProjectsService, ProjectsService>();
+builder.Services.AddScoped<IEmployeeRolesService, EmployeeRolesService>();
 
 
 

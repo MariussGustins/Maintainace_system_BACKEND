@@ -50,6 +50,40 @@ namespace Maintainace_system_BACKEND.Services
 
             return combinedData;
         }
+        public async Task<EmployeeDto?> GetEmployeeByIdAsync(int employeeId)
+        {
+            var employee = await _context.Employees
+                .Where(e => e.Id == employeeId)
+                .Select(e => new EmployeeDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Surname = e.Surname,
+                    Role_Id = e.Role_Id,
+                    PictureUrl = e.PictureUrl
+                })
+                .FirstOrDefaultAsync();
+
+            return employee;
+        }
+        public async Task<EmployeeDto?> GetEmployeeWithRoleAsync(string username, string password)
+        {
+            var employeeWithRole = await _context.EmployeeIdents
+                .Include(ei => ei.Employee) // Iekļauj saistīto Employee
+                .ThenInclude(e => e.Role)  // Iekļauj saistīto EmployeeRoles
+                .Where(ei => ei.Username == username && ei.Password == password)
+                .Select(ei => new EmployeeDto
+                {
+                    Id = ei.Employee.Id,
+                    Name = ei.Employee.Name,
+                    Surname = ei.Employee.Surname,
+                    RoleName = ei.Employee.Role.RoleName, // Lomas nosaukums no EmployeeRoles
+                    PictureUrl = ei.Employee.PictureUrl
+                })
+                .FirstOrDefaultAsync();
+
+            return employeeWithRole;
+        }
         
     }
 }

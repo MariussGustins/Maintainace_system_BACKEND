@@ -1,6 +1,8 @@
 using Maintainace_system_BACKEND.DTOs;
 using Maintainace_system_BACKEND.Interface;
+using Maintainace_system_BACKEND.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Maintainace_system_BACKEND.Controllers
 {
@@ -9,10 +11,13 @@ namespace Maintainace_system_BACKEND.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
+        private readonly DataContext _context;
 
-        public EmployeeController(IEmployeeService employeeService)
+
+        public EmployeeController(IEmployeeService employeeService, DataContext context)
         {
             _employeeService = employeeService;
+            _context = context;
         }
 
         [HttpGet]
@@ -28,7 +33,26 @@ namespace Maintainace_system_BACKEND.Controllers
             var combinedData = await _employeeService.GetEmployeesWithIdentsAsync();
             return Ok(combinedData);
         }
+        [HttpGet("{employeeId}")]
+        public async Task<ActionResult> GetEmployeeById(int employeeId)
+        {
+            try
+            {
+                // Izmantojam servisu, lai iegūtu darbinieka datus
+                var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
 
+                if (employee == null)
+                {
+                    return NotFound(new { message = "Employee not found." });
+                }
+
+                return Ok(employee);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
+            }
+        }
         [HttpPost]
         public async Task<ActionResult<EmployeeDto>> PostEmployee(EmployeeDto employeeDto)
         {
@@ -38,22 +62,23 @@ namespace Maintainace_system_BACKEND.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var employeesWithIdents = await _employeeService.GetEmployeesWithIdentsAsync();
-            var matchedEmployee = employeesWithIdents.FirstOrDefault(emp =>
-                emp.Username == loginDto.Username && emp.Password == loginDto.Password);
+            var matchedEmployee = await _context.EmployeeIdents
+                .Include(ei => ei.Employee)
+                .ThenInclude(e => e.Role)
+                .FirstOrDefaultAsync(ei => ei.Username == loginDto.Username && ei.Password == loginDto.Password);
 
             if (matchedEmployee == null)
             {
                 return Unauthorized(new { message = "Invalid username or password." });
             }
 
-            // For simplicity, no tokens are generated here; integrate with JWT if required
             return Ok(new
             {
-                Id = matchedEmployee.Id, // Add Id to EmployeeWithIdentDTO if missing
-                Name = matchedEmployee.Name,
-                Surname = matchedEmployee.Surname,
-                Role = "Employee", // Hardcoded role; replace with dynamic role if needed
+                Id = matchedEmployee.Employee?.Id ?? 0,
+                Name = matchedEmployee.Employee?.Name ?? "No Name",
+                Surname = matchedEmployee.Employee?.Surname ?? "No Surname",
+                Role = matchedEmployee.Employee?.Role?.RoleName ?? "No Role",
+                PictureUrl = matchedEmployee.Employee?.PictureUrl ?? "No Picture"
             });
         }
     }

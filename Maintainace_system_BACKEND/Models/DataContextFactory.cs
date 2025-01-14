@@ -9,18 +9,21 @@ namespace Maintainace_system_BACKEND.Models
     {
         public DataContext CreateDbContext(string[] args)
         {
-            // Build configuration
+            // Konfigurācijas ielāde
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            // Get connection string
+            // Savienojuma virknes iegūšana
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            // Create DbContextOptions
+            // DbContext opciju izveide
             var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(
+                connectionString,
+                new MySqlServerVersion(new Version(8, 4, 3)) // Jūsu MySQL servera versija
+            );
 
             return new DataContext(optionsBuilder.Options);
         }
