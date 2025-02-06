@@ -11,19 +11,27 @@ namespace Maintainace_system_BACKEND.Services
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-
         public EmployeeService(DataContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-
+        /**
+         * Iegūst visu darbinieku sarakstu.
+         * @return Saraksts ar darbinieku DTO objektiem.
+         */
         public async Task<IEnumerable<EmployeeDto>> GetEmployeeAsync()
         {
             var employees = await _context.Employees.ToListAsync();
             return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
         }
+
+        /**
+         * Izveido jaunu darbinieku un saglabā to datu bāzē.
+         * @param employeeDto - Jaunā darbinieka dati DTO formātā.
+         * @return Izveidotā darbinieka ID.
+         */
         public async Task<int> CreateEmployeeAsync(EmployeeDto employeeDto)
         {
             var employeeEntity = _mapper.Map<Employee>(employeeDto);
@@ -31,6 +39,11 @@ namespace Maintainace_system_BACKEND.Services
             await _context.SaveChangesAsync();
             return employeeEntity.Id;
         }
+
+        /**
+         * Iegūst darbiniekus kopā ar to identifikācijas datiem.
+         * @return Saraksts ar darbiniekiem un to identifikācijas informāciju.
+         */
         public async Task<IEnumerable<EmployeeWithIdentDTO>> GetEmployeesWithIdentsAsync()
         {
             var employees = await _context.Employees.ToListAsync();
@@ -50,6 +63,12 @@ namespace Maintainace_system_BACKEND.Services
 
             return combinedData;
         }
+
+        /**
+         * Iegūst darbinieka datus pēc ID.
+         * @param employeeId - Darbinieka unikālais identifikators.
+         * @return Darbinieka DTO vai null, ja darbinieks nav atrasts.
+         */
         public async Task<EmployeeDto?> GetEmployeeByIdAsync(int employeeId)
         {
             var employee = await _context.Employees
@@ -66,6 +85,13 @@ namespace Maintainace_system_BACKEND.Services
 
             return employee;
         }
+
+        /**
+         * Autentificē darbinieku pēc lietotājvārda un paroles.
+         * @param username - Lietotājvārds.
+         * @param password - Parole.
+         * @return Darbinieka DTO ar lomas informāciju vai null, ja lietotājs netika atrasts.
+         */
         public async Task<EmployeeDto?> GetEmployeeWithRoleAsync(string username, string password)
         {
             var employeeWithRole = await _context.EmployeeIdents
@@ -84,6 +110,5 @@ namespace Maintainace_system_BACKEND.Services
 
             return employeeWithRole;
         }
-        
     }
 }

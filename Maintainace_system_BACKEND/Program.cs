@@ -7,13 +7,12 @@ using Maintainace_system_BACKEND.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Pievieno MVC kontrolierus
 builder.Services.AddControllers();
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register AutoMapper
+// Reģistrē AutoMapper
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfile());
@@ -21,7 +20,7 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-// Configure Entity Framework to use SQL Server
+// Konfigurē datu bāzes kontekstu ar MySQL savienojumu
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -29,22 +28,19 @@ builder.Services.AddDbContext<DataContext>(options =>
     )
 );
 
-// Register EmployeeService
+// Reģistrē pakalpojumus (Services) atkarību injekcijai
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEmployeeIdentService, EmployeeIdentService>();
 builder.Services.AddScoped<IFilesService, FilesService>();
 builder.Services.AddScoped<IProjectsService, ProjectsService>();
 builder.Services.AddScoped<IEmployeeRolesService, EmployeeRolesService>();
 
-
-
-
-// CORS Configuration
+// CORS Konfigurācija
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
         builder => builder
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://localhost:4200") // Atļaut tikai Angular frontend savienojumu
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
@@ -52,18 +48,21 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Attīstības vidē aktivizē Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 }
 
+// Middleware konfigurācija
 app.UseRouting();
 app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
 app.MapControllers();
 
+// Norāda API darbības portu
 app.Urls.Add("http://*:5086");
 
+// Palaiž API lietotni
 app.Run();

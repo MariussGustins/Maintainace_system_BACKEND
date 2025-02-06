@@ -8,13 +8,13 @@ public class FilesConfiguration : IEntityTypeConfiguration<Files>
 {
     public void Configure(EntityTypeBuilder<Files> builder)
     {
-        // Define the table name
+        // Defineta tasbula
         builder.ToTable("Files");
 
-        // Define the primary key
+        // Defineta primārā atslēga
         builder.HasKey(f => f.Id);
 
-        // Define properties
+        // Definēti nosacījumi un relācijas
         builder.Property(f => f.Id)
             .ValueGeneratedOnAdd();
 
@@ -45,11 +45,10 @@ public class FilesConfiguration : IEntityTypeConfiguration<Files>
         builder.Property(f => f.EmployeeIdentId)
             .IsRequired();
 
-        // Define relationships if necessary
-        // Example: If Files has a foreign key relationship with EmployeeIdent
+        
         builder.HasOne<EmployeeIdent>()
-            .WithMany() // Adjust this if EmployeeIdent has a collection of Files
+            .WithMany() 
             .HasForeignKey(f => f.EmployeeIdentId)
-            .OnDelete(DeleteBehavior.Cascade); // Specify delete behavior
+            .OnDelete(DeleteBehavior.Cascade); 
     }
 }

@@ -13,13 +13,16 @@ namespace Maintainace_system_BACKEND.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly DataContext _context;
 
-
         public EmployeeController(IEmployeeService employeeService, DataContext context)
         {
             _employeeService = employeeService;
             _context = context;
         }
 
+        /**
+         * Iegūst visu darbinieku sarakstu.
+         * @return Saraksts ar darbinieku DTO objektiem.
+         */
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
         {
@@ -27,25 +30,32 @@ namespace Maintainace_system_BACKEND.Controllers
             return Ok(employees);
         }
         
+        /**
+         * Iegūst kombinētus darbinieku un identifikācijas datus.
+         * @return Saraksts ar darbiniekiem un to identifikācijas informāciju.
+         */
         [HttpGet("combined")]
         public async Task<ActionResult<IEnumerable<EmployeeWithIdentDTO>>> GetEmployeesWithIdents()
         {
             var combinedData = await _employeeService.GetEmployeesWithIdentsAsync();
             return Ok(combinedData);
         }
+        
+        /**
+         * Iegūst konkrētu darbinieku pēc ID.
+         * @param employeeId - Darbinieka ID.
+         * @return Darbinieka dati vai kļūdas paziņojums.
+         */
         [HttpGet("{employeeId}")]
         public async Task<ActionResult> GetEmployeeById(int employeeId)
         {
             try
             {
-                // Izmantojam servisu, lai iegūtu darbinieka datus
                 var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
-
                 if (employee == null)
                 {
                     return NotFound(new { message = "Employee not found." });
                 }
-
                 return Ok(employee);
             }
             catch (Exception ex)
@@ -53,12 +63,24 @@ namespace Maintainace_system_BACKEND.Controllers
                 return StatusCode(500, new { message = "An error occurred.", details = ex.Message });
             }
         }
+        
+        /**
+         * Izveido jaunu darbinieku.
+         * @param employeeDto - Jaunā darbinieka dati.
+         * @return Darbinieka ID.
+         */
         [HttpPost]
         public async Task<ActionResult<EmployeeDto>> PostEmployee(EmployeeDto employeeDto)
         {
             var employeeId = await _employeeService.CreateEmployeeAsync(employeeDto);
             return CreatedAtAction(nameof(GetEmployees), new { id = employeeId }, null);
         }
+        
+        /**
+         * Autentificē darbinieku pēc lietotājvārda un paroles.
+         * @param loginDto - Pieteikšanās dati.
+         * @return Lietotāja informācija vai kļūdas paziņojums.
+         */
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {

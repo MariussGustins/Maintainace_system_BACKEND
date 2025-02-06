@@ -15,6 +15,11 @@ public class FilesController : ControllerBase
         _filesService = filesService;
     }
 
+    /**
+     * Izveido jaunu faila metadatu ierakstu.
+     * @param fileDto - Faila metadatu DTO.
+     * @return Izveidotā faila metadati vai kļūdas paziņojums.
+     */
     [HttpPost]
     public async Task<IActionResult> CreateFileMetadata([FromBody] FilesDto fileDto)
     {
@@ -24,6 +29,12 @@ public class FilesController : ControllerBase
         var createdFile = await _filesService.CreateFileMetadataAsync(fileDto);
         return Ok(createdFile);
     }
+    
+    /**
+     * Iegūst failus, kas piesaistīti konkrētam darbiniekam.
+     * @param employeeId - Darbinieka ID.
+     * @return Saraksts ar failiem vai kļūdas paziņojums, ja faili nav atrasti.
+     */
     [HttpGet("by-employee/{employeeId}")]
     public async Task<IActionResult> GetFilesByEmployeeId(int employeeId)
     {
@@ -34,5 +45,4 @@ public class FilesController : ControllerBase
 
         return Ok(files);
     }
-
 }

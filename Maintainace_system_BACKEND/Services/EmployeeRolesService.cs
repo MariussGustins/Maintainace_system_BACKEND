@@ -14,7 +14,11 @@ public class EmployeeRolesService : IEmployeeRolesService
         _context = context;
     }
 
-    // Pievieno jaunu darbinieku lomu
+    /**
+     * Pievieno jaunu darbinieka lomu datu bāzē.
+     * @param employeeRoleDto - Jaunās lomas dati DTO formātā.
+     * @return Izveidotā darbinieka loma.
+     */
     public async Task<EmployeeRoles> AddEmployeeRole(EmployeeRolesDto employeeRoleDto)
     {
         var newRole = new EmployeeRoles
@@ -27,19 +31,30 @@ public class EmployeeRolesService : IEmployeeRolesService
         return newRole;
     }
 
-    // Atgriež visas darbinieku lomas
+    /**
+     * Iegūst visas darbinieku lomas no datu bāzes.
+     * @return Saraksts ar darbinieku lomām.
+     */
     public async Task<IEnumerable<EmployeeRoles>> GetAllEmployeeRoles()
     {
         return await _context.EmployeeRoles.ToListAsync();
     }
 
-    // Meklē darbinieku lomu pēc ID
+    /**
+     * Iegūst darbinieka lomu pēc ID.
+     * @param id - Lomas unikālais identifikators.
+     * @return Darbinieka loma vai null, ja loma nav atrasta.
+     */
     public async Task<EmployeeRoles?> GetEmployeeRoleById(int id)
     {
         return await _context.EmployeeRoles.FindAsync(id);
     }
 
-    // Dzēš darbinieku lomu pēc ID
+    /**
+     * Dzēš darbinieka lomu pēc ID.
+     * @param id - Lomas unikālais identifikators.
+     * @return True, ja loma veiksmīgi dzēsta, false, ja loma nav atrasta.
+     */
     public async Task<bool> DeleteEmployeeRole(int id)
     {
         var role = await _context.EmployeeRoles.FindAsync(id);

@@ -15,6 +15,10 @@ public class EmployeeIdentController : ControllerBase
         _employeeIdentService = employeeIdentService;
     }
 
+    /**
+     * Iegūst visu darbinieku identifikatoru sarakstu.
+     * @return Saraksts ar darbinieku identifikatoriem.
+     */
     [HttpGet]
     public async Task<IActionResult> GetEmployeeIdents()
     {
@@ -22,6 +26,11 @@ public class EmployeeIdentController : ControllerBase
         return Ok(employeeIdents);
     }
 
+    /**
+     * Izveido jaunu darbinieka identifikatoru.
+     * @param employeeIdentDto - Jaunā darbinieka identifikatora dati.
+     * @return Izveidotā darbinieka identifikatora ID.
+     */
     [HttpPost]
     public async Task<IActionResult> CreateEmployeeIdent([FromBody] EmployeeIdentDto employeeIdentDto)
     {
