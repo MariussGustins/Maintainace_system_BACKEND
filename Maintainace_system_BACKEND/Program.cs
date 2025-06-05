@@ -52,11 +52,34 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+    app.UseSwaggerUI(options =>
+    {
+        options.DocumentTitle = "Ofisa Pārvaldības API Dokumentācija";
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+
+        // Optional: collapse all endpoints by default
+        options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+
+        // Optional: show request duration
+        options.DisplayRequestDuration();
+
+        // Inject custom styling
+        options.InjectStylesheet("/swagger-ui/custom.css");
+
+        // Optional: Add a logo
+        options.HeadContent = @"
+    <style>
+        .topbar-wrapper img {
+            content: url('/swagger-ui/logo.png');
+            height: 40px;
+        }
+    </style>";
+    });
 }
 
 // Middleware konfigurācija
 app.UseRouting();
+app.UseStaticFiles();
 app.UseCors("AllowAngularApp");
 app.UseHttpsRedirection();
 app.MapControllers();

@@ -1,0 +1,24 @@
+/* Swagger UI Custom Styling */
+.topbar {
+    background-color: #003366 !important; /* Dark Blue */
+}
+
+.swagger-ui .info hgroup h2 {
+    color: #003366;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.swagger-ui .info hgroup h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+}
+
+.swagger-ui .scheme-container {
+    display: none;
+}
+
+.swagger-ui .opblock-summary-method {
+    text-transform: capitalize;
+}
